@@ -4,7 +4,6 @@ backend/.env
 backend/public/uploads_file/
 backend/public/uploads_img/avatar/
 backend/public/uploads_img/bia_truyen/
-backend/package.json
-backend/package-lock.json
+
 # Ignore frontend files (nếu có thư mục frontend)
 frontend

@@ -19,6 +19,17 @@ exports.register = async (req, res) => {
   }
 
   try {
+    // Kiểm tra username hoặc email đã tồn tại
+    const existingUsers = await User.findByUsername(username);
+    const emailExists = await User.findByEmail(email); // tạo thêm hàm này ở user.model
+
+    if (existingUsers.length > 0) {
+      return res.status(400).json({ message: "Username đã tồn tại" });
+    }
+    if (emailExists.length > 0) {
+      return res.status(400).json({ message: "Email đã tồn tại" });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = {
       username,
@@ -136,5 +147,68 @@ exports.updateMe = async (req, res) => {
       message: "Lỗi khi cập nhật thông tin",
       error: err.message,
     });
+  }
+};
+// [PUT] /api/auth/change-password - Đổi mật khẩu
+exports.changePassword = async (req, res) => {
+  const userId = req.user.id;
+  const { old_password, new_password } = req.body;
+
+  try {
+    const results = await User.findById(userId);
+    if (results.length === 0) {
+      return res.status(404).json({ message: "Người dùng không tồn tại" });
+    }
+
+    const user = results[0];
+
+    const isMatch = await bcrypt.compare(old_password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Mật khẩu cũ không đúng" });
+    }
+
+    const hashed = await bcrypt.hash(new_password, 10);
+    const updated = await User.updatePassword(userId, hashed);
+
+    if (updated === 0) {
+      return res.status(400).json({ message: "Không thể cập nhật mật khẩu" });
+    }
+
+    res.json({ message: "Đổi mật khẩu thành công" });
+  } catch (err) {
+    res.status(500).json({
+      message: "Lỗi khi đổi mật khẩu",
+      error: err.message,
+    });
+  }
+};
+// [DELETE] /api/users/:id - Admin xóa người dùng (trừ tác giả)
+exports.deleteUser = async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    const users = await User.findById(userId);
+
+    if (users.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "Không tìm thấy người dùng để xóa" });
+    }
+
+    const user = users[0];
+
+    if (user.role === "author") {
+      return res.status(400).json({
+        message:
+          "Không thể xóa tài khoản tác giả qua API này. Hệ thống sẽ xử lý riêng.",
+      });
+    }
+
+    const affectedRows = await User.deleteById(userId);
+
+    res.json({ message: "Xóa người dùng thành công!" });
+  } catch (err) {
+    console.error("deleteUser error:", err);
+    res.status(500).json({ message: "Lỗi server khi xóa người dùng" });
   }
 };

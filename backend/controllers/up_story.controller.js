@@ -10,6 +10,18 @@ const uploadStory = async (req, res) => {
       return res.status(400).json({ message: "Ảnh bìa là bắt buộc" });
     }
 
+    // Kiểm tra các trường bắt buộc
+    if (
+      !data.title ||
+      !data.author_name ||
+      !data.description ||
+      !data.chuong_mau
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Các trường thông tin không được để trống" });
+    }
+
     const anh_bia = file.filename;
     const now = new Date();
     const user_id = req.user.id;
@@ -54,6 +66,8 @@ const uploadStory = async (req, res) => {
       error: err.message,
     });
   }
+  console.log("req.body:", req.body);
+  console.log("req.file:", req.file);
 };
 
 module.exports = { uploadStory };

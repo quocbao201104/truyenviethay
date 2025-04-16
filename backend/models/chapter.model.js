@@ -70,7 +70,7 @@ const ChapterModel = {
         "Chương mẫu",
         chapterData.noi_dung,
         chapterData.thoi_gian_dang,
-        "cho_duyet",
+        "chuong_mau",
         1,
       ]
     );

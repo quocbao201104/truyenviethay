@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const storyController = require("../controllers/story.controller");
 const { authenticateToken, authorizeRoles } = require("../middleware/auth");
-console.log("storyController:", storyController);
 
 // Lấy tất cả truyện
 router.get("/", storyController.getAllStories);
@@ -55,5 +54,4 @@ router.put(
   storyController.approveOrRejectStory
 );
 
-console.log("Story routes loaded");
 module.exports = router;

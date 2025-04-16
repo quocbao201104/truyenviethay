@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 const authRoutes = require("./routes/auth.routes");
 const storyRoutes = require("./routes/story.routes");
 const chapterRoutes = require("./routes/chapter.routes");
-const uploadRoutes = require("./routes/upload.routes");
+const uploadRoutes = require("./routes/up_story.routes");
 const fileRoutes = require("./routes/file.routes");
 
 // Mount các route
@@ -30,7 +30,6 @@ app.get("/", (req, res) => {
   res.send("Backend is working!");
 });
 
-// Tạo folder public để chứa ảnh bìa, v.v.
 // Middleware xử lý 404
 app.use((req, res) => {
   console.log(`Route not found: ${req.method} ${req.url}`);

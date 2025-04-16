@@ -41,7 +41,23 @@ const UserModel = {
     `,
       [id]
     );
+    // Nếu không tìm thấy user, trả về null
+    return rows; //.length > 0 ? rows[0] : null
+  },
+
+  findByEmail: async (email) => {
+    const [rows] = await db.query("SELECT * FROM users_new WHERE email = ?", [
+      email,
+    ]);
     return rows;
+  },
+
+  // Cập nhật mật khẩu mới
+  updatePassword: async (id, hashedPassword) => {
+    await db.execute("UPDATE users_new SET password = ? WHERE id = ?", [
+      hashedPassword,
+      id,
+    ]);
   },
 
   // Cập nhật thông tin người dùng
@@ -72,6 +88,11 @@ const UserModel = {
     values.push(id);
     const sql = `UPDATE users_new SET ${fields.join(", ")} WHERE id = ?`;
     const [result] = await db.query(sql, values);
+    return result.affectedRows;
+  },
+
+  deleteById: async (id) => {
+    const [result] = await db.query(`DELETE FROM users_new WHERE id = ?`, [id]);
     return result.affectedRows;
   },
 };

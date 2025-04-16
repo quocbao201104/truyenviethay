@@ -40,17 +40,23 @@ exports.validateLogin = [
   handleValidation,
 ];
 
-exports.validateUpdateProfile = [
+exports.validateUpdateUser = [
   body("full_name")
     .optional()
     .isLength({ min: 2 })
-    .withMessage("Họ tên quá ngắn"),
+    .withMessage("Họ tên phải có ít nhất 2 ký tự"),
+
+  body("email").optional().isEmail().withMessage("Email không hợp lệ"),
 
   body("phone")
     .optional()
     .matches(/^(0|\+84)\d{9}$/)
     .withMessage("Số điện thoại không hợp lệ"),
 
+  body("avatar")
+    .optional()
+    .isURL()
+    .withMessage("Avatar phải là một URL hợp lệ"),
   handleValidation,
 ];
 

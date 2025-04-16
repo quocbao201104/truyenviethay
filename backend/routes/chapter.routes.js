@@ -2,7 +2,10 @@ const express = require("express");
 const router = express.Router();
 const chapterController = require("../controllers/chapter.controller");
 const { authenticateToken, authorizeRoles } = require("../middleware/auth");
-const { validateCreateChapter } = require("../validators/chapter.validator");
+const {
+  validateCreateChapter,
+  validateUpdateChapter,
+} = require("../validators/chapter.validator");
 
 // Tác giả đăng chương mới
 router.post(
@@ -23,6 +26,7 @@ router.put(
   "/:id",
   authenticateToken,
   authorizeRoles("admin", "author"),
+  validateUpdateChapter,
   chapterController.updateChapter
 );
 

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const storyController = require("../controllers/story.controller");
 const { authenticateToken, authorizeRoles } = require("../middleware/auth");
+const { validateUpdateStory } = require("../validators/story.validator");
 
 // Lấy tất cả truyện
 router.get("/", storyController.getAllStories);
@@ -29,6 +30,7 @@ router.put(
   "/:id",
   authenticateToken,
   authorizeRoles("admin", "author"),
+  validateUpdateStory,
   storyController.updateStory
 );
 // Xoá truyện
@@ -48,7 +50,7 @@ router.get(
 
 // Duyệt hoặc từ chối truyện (Admin)
 router.put(
-  "/:id/duyet-or-tu_choi",
+  "/:id/duyet-truyen",
   authenticateToken,
   authorizeRoles("admin"),
   storyController.approveOrRejectStory

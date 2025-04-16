@@ -27,3 +27,24 @@ exports.validateCreateChapter = [
 
   handleValidation,
 ];
+
+exports.validateUpdateChapter = [
+  body("tieu_de")
+    .notEmpty()
+    .withMessage("Tiêu đề chương không được để trống")
+    .isLength({ min: 3 })
+    .withMessage("Tiêu đề chương phải có ít nhất 3 ký tự"),
+
+  body("noi_dung")
+    .notEmpty()
+    .withMessage("Nội dung chương không được để trống")
+    .isLength({ min: 10 })
+    .withMessage("Nội dung chương phải có ít nhất 10 ký tự"),
+
+  body("so_chuong")
+    .notEmpty()
+    .withMessage("Số chương không được để trống")
+    .isInt({ min: 1 })
+    .withMessage("Số chương phải là một số nguyên và lớn hơn 0"),
+  handleValidation,
+];

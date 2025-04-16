@@ -28,12 +28,12 @@ const getStoryById = async (req, res) => {
   }
 };
 
-// Cập nhật truyện theo ID
 const updateStory = async (req, res) => {
-  try {
-    const storyId = req.params.id;
-    const data = req.body;
+  const storyId = req.params.id;
+  const { ten_truyen, tac_gia, mo_ta, trang_thai } = req.body; // Không cần lấy ảnh bìa nếu không có upload mới
 
+  try {
+    // Kiểm tra xem truyện có tồn tại không
     const existingStory = await StoryModel.getById(storyId);
     if (!existingStory) {
       return res
@@ -41,7 +41,7 @@ const updateStory = async (req, res) => {
         .json({ message: "Không tìm thấy truyện để cập nhật" });
     }
 
-    // Phân quyền: admin hoặc author chính chủ
+    // Phân quyền: admin hoặc tác giả chính chủ mới được quyền sửa truyện này
     const user = req.user;
     if (user.role !== "admin" && user.id !== existingStory.user_id) {
       return res
@@ -49,8 +49,30 @@ const updateStory = async (req, res) => {
         .json({ message: "Bạn không có quyền sửa truyện này" });
     }
 
-    const affectedRows = await StoryModel.update(storyId, data);
-    res.status(200).json({ message: "Cập nhật truyện thành công" });
+    // Chuẩn bị dữ liệu cần cập nhật
+    const updatedData = {
+      ten_truyen,
+      tac_gia,
+      mo_ta,
+      trang_thai,
+      thoi_gian_cap_nhat: new Date(), // Tự động gán thời gian cập nhật
+    };
+
+    // Kiểm tra xem có ảnh bìa mới không
+    if (req.file) {
+      updatedData.anh_bia = "/uploads_img/bia_truyen/" + req.file.filename; // Cập nhật ảnh bìa mới nếu có
+    }
+
+    // Cập nhật truyện trong database
+    const affectedRows = await StoryModel.update(storyId, updatedData);
+
+    if (affectedRows > 0) {
+      return res.status(200).json({ message: "Cập nhật truyện thành công" });
+    } else {
+      return res
+        .status(400)
+        .json({ message: "Không có thay đổi nào được lưu lại" });
+    }
   } catch (error) {
     console.error("Lỗi khi cập nhật truyện:", error);
     res.status(500).json({ message: "Lỗi khi cập nhật truyện" });

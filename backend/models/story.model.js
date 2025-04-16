@@ -53,36 +53,25 @@ const StoryModel = {
   update: async (id, storyData) => {
     const [result] = await db.query(
       `UPDATE truyen_new SET 
-        ten_truyen = ?, tac_gia = ?, mo_ta = ?, trang_thai = ?, tinh_trang = ?, 
-        trang_thai_viet = ?, yeu_to_nhay_cam = ?, link_nguon = ?, muc_tieu = ?, 
-        doi_tuong_doc_gia = ?, thoi_gian_cap_nhat = ?, anh_bia = ?, 
-        trang_thai_kiem_duyet = ?, user_id = ?, ghi_chu_admin = ?, 
-        danh_gia_noi_dung = ?, danh_gia_van_phong = ?, danh_gia_sang_tao = ?
+        ten_truyen = ?, 
+        tac_gia = ?, 
+        mo_ta = ?, 
+        trang_thai = ?, 
+        anh_bia = ?, 
+        thoi_gian_cap_nhat = NOW()
       WHERE id = ?`,
       [
         storyData.ten_truyen,
         storyData.tac_gia,
         storyData.mo_ta,
         storyData.trang_thai,
-        storyData.tinh_trang,
-        storyData.trang_thai_viet,
-        storyData.yeu_to_nhay_cam,
-        storyData.link_nguon,
-        storyData.muc_tieu,
-        storyData.doi_tuong_doc_gia,
-        storyData.thoi_gian_cap_nhat,
         storyData.anh_bia,
-        storyData.trang_thai_kiem_duyet,
-        storyData.user_id,
-        storyData.ghi_chu_admin,
-        storyData.danh_gia_noi_dung,
-        storyData.danh_gia_van_phong,
-        storyData.danh_gia_sang_tao,
         id,
       ]
     );
     return result.affectedRows;
   },
+
   // Lấy danh sách truyện có trạng thái 'cho_duyet'
   getPendingApproval: async () => {
     const [rows] = await db.query(

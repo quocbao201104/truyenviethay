@@ -6,6 +6,7 @@ const { authenticateToken, authorizeRoles } = require("../middleware/auth");
 const {
   validateRegister,
   validateLogin,
+  validateUpdateUser,
 } = require("../validators/auth.validator");
 
 router.post("/dang-ky", validateRegister, authController.register);
@@ -16,6 +17,7 @@ router.put(
   "/me",
   authenticateToken,
   upload.single("avatar"),
+  validateUpdateUser,
   authController.updateMe
 );
 

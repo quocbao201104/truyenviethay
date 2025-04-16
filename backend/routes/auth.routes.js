@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const authController = require("../controllers/auth.controller");
-const upload = require("../middleware/upload_avatar");
+const upload = require("../middleware/upload_img"); // dùng multer
 const { authenticateToken, authorizeRoles } = require("../middleware/auth");
 const {
   validateRegister,

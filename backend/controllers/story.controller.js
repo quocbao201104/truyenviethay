@@ -27,7 +27,7 @@ const getStoryById = async (req, res) => {
     res.status(500).json({ message: "Lỗi khi lấy truyện" });
   }
 };
-
+// Cập nhật thông tin truyện
 const updateStory = async (req, res) => {
   const storyId = req.params.id;
   const { ten_truyen, tac_gia, mo_ta, trang_thai } = req.body; // Không cần lấy ảnh bìa nếu không có upload mới

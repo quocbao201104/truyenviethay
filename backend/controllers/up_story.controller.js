@@ -47,6 +47,10 @@ const uploadStory = async (req, res) => {
       danh_gia_van_phong: 0,
       danh_gia_sang_tao: 0,
     });
+    // Gắn thể loại nếu có
+    if (Array.isArray(data.theloai_ids) && data.theloai_ids.length > 0) {
+      await StoryModel.addGenresForStory(storyId, data.theloai_ids);
+    }
 
     // Tạo chương mẫu
     await ChapterModel.createSampleChapter({

@@ -108,6 +108,14 @@ const StoryModel = {
     ]);
     return result.affectedRows;
   },
+  // Gắn nhiều thể loại vào 1 truyện
+  addGenresForStory: async (truyenId, theloaiIds) => {
+    const values = theloaiIds.map((id) => [truyenId, id]);
+    await db.query(
+      `INSERT INTO truyen_theloai (truyen_id, theloai_id) VALUES ?`,
+      [values]
+    );
+  },
 };
 
 module.exports = StoryModel;

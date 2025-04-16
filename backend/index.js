@@ -18,12 +18,14 @@ const chapterRoutes = require("./routes/chapter.routes");
 const uploadRoutes = require("./routes/up_story.routes");
 const fileRoutes = require("./routes/file.routes");
 const errorMiddleware = require("./middleware/errorHandler");
+const theloaiRoutes = require("./routes/category.routes");
 // Mount các route
 app.use("/api/auth", authRoutes);
 app.use("/api/truyen", storyRoutes);
 app.use("/api/chuong", chapterRoutes);
 app.use("/api/upload-truyen", uploadRoutes);
 app.use("/api/upload-files", fileRoutes);
+app.use("/api/theloai", theloaiRoutes);
 
 // Test route
 app.get("/", (req, res) => {

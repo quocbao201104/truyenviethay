@@ -1,6 +1,7 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const UserModel = require("../models/user.model");
 
 // Đăng ký
 exports.register = async (req, res) => {
@@ -64,6 +65,26 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: "Sai mật khẩu" });
     }
 
+    // Kiểm tra tài khoản bị ban
+    if (user.status === "blocked") {
+      const now = new Date();
+      const banUntil = user.ban_until ? new Date(user.ban_until) : null;
+
+      if (!banUntil || banUntil > now) {
+        return res.status(403).json({
+          message: banUntil
+            ? `Tài khoản bị khóa đến ${banUntil.toLocaleString()}`
+            : `Tài khoản đã bị khóa vĩnh viễn`,
+        });
+      } else {
+        // Tự động mở khóa
+        await User.updateStatus(user.id, "active", null);
+        user.status = "active";
+        user.ban_until = null;
+      }
+    }
+
+    // Nếu không bị ban → cấp token
     const token = jwt.sign(
       { id: user.id, role: user.role },
       process.env.JWT_SECRET,
@@ -182,6 +203,66 @@ exports.changePassword = async (req, res) => {
     });
   }
 };
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await UserModel.findAllUsers();
+    res.json({ data: users });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Lỗi lấy danh sách người dùng", error: err.message });
+  }
+};
+
+// [GET] /api/users/:id - Lấy thông tin người dùng theo ID
+exports.getUserById = async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    const users = await User.findById(userId);
+
+    if (users.length === 0) {
+      return res.status(404).json({ message: "Không tìm thấy người dùng" });
+    }
+
+    const user = users[0];
+    res.json({
+      message: "Thông tin người dùng",
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        full_name: user.full_name,
+        phone: user.phone,
+        avatar: user.avatar,
+        role: user.role,
+        created_at: user.created_at,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Lỗi khi lấy thông tin người dùng",
+      error: err.message,
+    });
+  }
+};
+
+exports.searchUsers = async (req, res) => {
+  const { q } = req.query; // ví dụ: ?q=Nguyen
+
+  try {
+    if (!q) return res.status(400).json({ message: "Thiếu từ khóa tìm kiếm" });
+
+    const users = await UserModel.searchUsersByFullName(q);
+    res.json({ data: users });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Lỗi tìm kiếm người dùng", error: err.message });
+  }
+};
+
 // [DELETE] /api/users/:id - Admin xóa người dùng (trừ tác giả)
 exports.deleteUser = async (req, res) => {
   const userId = req.params.id;

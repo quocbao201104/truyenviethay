@@ -45,6 +45,25 @@ const UserModel = {
     return rows; //.length > 0 ? rows[0] : null
   },
 
+  // Tìm người dùng theo tên đầy đủ (full_name)
+  searchUsersByFullName: async (keyword) => {
+    const [rows] = await db.query(
+      `SELECT id, username, role, status, ban_until, full_name 
+       FROM users_new 
+       WHERE full_name LIKE ?`,
+      [`%${keyword}%`] // tìm gần đúng
+    );
+    return rows;
+  },
+
+  // ban người dùng
+  updateStatus: async (userId, status, banUntil) => {
+    await db.query(
+      `UPDATE users_new SET status = ?, ban_until = ? WHERE id = ?`,
+      [status, banUntil, userId]
+    );
+  },
+
   findByEmail: async (email) => {
     const [rows] = await db.query("SELECT * FROM users_new WHERE email = ?", [
       email,
@@ -89,6 +108,19 @@ const UserModel = {
     const sql = `UPDATE users_new SET ${fields.join(", ")} WHERE id = ?`;
     const [result] = await db.query(sql, values);
     return result.affectedRows;
+  },
+  findAllUsers: async () => {
+    const [rows] = await db.query(
+      `SELECT id, username, role, status, ban_until, full_name FROM users_new`
+    );
+    return rows;
+  },
+  getUserById: async (id) => {
+    const [rows] = await db.query(
+      `SELECT id, username, role, status, ban_until, full_name FROM users_new WHERE id = ?`,
+      [id]
+    );
+    return rows[0];
   },
 
   deleteById: async (id) => {

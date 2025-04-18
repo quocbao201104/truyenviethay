@@ -1,4 +1,5 @@
 const ChapterModel = require("../models/chapter.model");
+const chapterService = require("../services/chapter.sevices"); // Import service duyệt chương
 
 // [POST] /api/chapters - Tác giả thêm chương mới (chờ duyệt)
 const createChapter = async (req, res) => {
@@ -25,7 +26,28 @@ const createChapter = async (req, res) => {
     res.status(500).json({ message: "Lỗi server khi tạo chương." });
   }
 };
-// laay danh sach chuong theo id truyen có phân trang , 20 chuong/1 trang
+
+// Duyệt chương
+const approveOrRejectChapter = async (req, res) => {
+  const { action } = req.body; // action có thể là 'duyet' hoặc 'tu_choi'
+  const chapterId = req.params.id;
+
+  if (!action) {
+    return res
+      .status(400)
+      .json({ message: "Vui lòng cung cấp hành động (duyet/tu_choi)." });
+  }
+
+  try {
+    const result = await chapterService.approveChapter(chapterId, action);
+    res.json(result);
+  } catch (error) {
+    console.error("Error in approveOrRejectChapter:", error);
+    res.status(500).json({ message: "Có lỗi xảy ra!" });
+  }
+};
+
+// lấy danh sach chuong theo id truyen có phân trang , 20 chuong/1 trang
 const getChaptersByStoryId = async (req, res) => {
   try {
     const truyen_id = parseInt(req.params.id); // đảm bảo là số
@@ -117,4 +139,5 @@ module.exports = {
   getChapterById,
   updateChapter,
   deleteChapter,
+  approveOrRejectChapter,
 };

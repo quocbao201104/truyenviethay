@@ -12,6 +12,6 @@ router.post(
   upload.single("bia_truyen"), // Multer middleware để xử lý file upload
   validateUpStory,
   uploadStory
-);
+); // Tải lên truyện mới
 
 module.exports = router;

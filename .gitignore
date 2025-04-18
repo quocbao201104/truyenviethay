@@ -1,9 +1,7 @@
 # Ignore backend files
 backend/node_modules/
 backend/.env
-backend/public/uploads_file/
-backend/public/uploads_img/avatar/
-backend/public/uploads_img/bia_truyen/
+backend/public/
 
 # Ignore frontend files (nếu có thư mục frontend)
 frontend

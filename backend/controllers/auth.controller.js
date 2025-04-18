@@ -248,21 +248,6 @@ exports.getUserById = async (req, res) => {
   }
 };
 
-exports.searchUsers = async (req, res) => {
-  const { q } = req.query; // ví dụ: ?q=Nguyen
-
-  try {
-    if (!q) return res.status(400).json({ message: "Thiếu từ khóa tìm kiếm" });
-
-    const users = await UserModel.searchUsersByFullName(q);
-    res.json({ data: users });
-  } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Lỗi tìm kiếm người dùng", error: err.message });
-  }
-};
-
 // [DELETE] /api/users/:id - Admin xóa người dùng (trừ tác giả)
 exports.deleteUser = async (req, res) => {
   const userId = req.params.id;

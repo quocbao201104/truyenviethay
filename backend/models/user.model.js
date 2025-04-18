@@ -45,17 +45,6 @@ const UserModel = {
     return rows; //.length > 0 ? rows[0] : null
   },
 
-  // Tìm người dùng theo tên đầy đủ (full_name)
-  searchUsersByFullName: async (keyword) => {
-    const [rows] = await db.query(
-      `SELECT id, username, role, status, ban_until, full_name 
-       FROM users_new 
-       WHERE full_name LIKE ?`,
-      [`%${keyword}%`] // tìm gần đúng
-    );
-    return rows;
-  },
-
   // ban người dùng
   updateStatus: async (userId, status, banUntil) => {
     await db.query(

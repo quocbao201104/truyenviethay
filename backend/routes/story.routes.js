@@ -14,6 +14,7 @@ router.get(
   authorizeRoles("admin"),
   storyController.getStoriesByUserId
 );
+
 // tác giả xem truyện của mình
 router.get(
   "/truyen-cua-toi",
@@ -55,5 +56,6 @@ router.put(
   authorizeRoles("admin"),
   storyController.approveOrRejectStory
 );
+// Lấy danh sách user theo dõi truyện của tác giả
 
 module.exports = router;

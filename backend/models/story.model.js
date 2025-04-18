@@ -49,6 +49,15 @@ const StoryModel = {
     return rows[0];
   },
 
+  // Lấy danh sách người dùng theo dõi truyện
+  getFollowers: async (storyId) => {
+    const [followers] = await db.query(
+      "SELECT user_id FROM theo_doi WHERE truyen_id = ?",
+      [storyId]
+    );
+    return followers;
+  },
+
   // Cập nhật truyện
   update: async (id, storyData) => {
     const [result] = await db.query(
@@ -78,15 +87,6 @@ const StoryModel = {
       `SELECT * FROM truyen_new WHERE trang_thai_kiem_duyet = 'cho_duyet'`
     );
     return rows;
-  },
-
-  // Cập nhật trạng thái duyệt / từ chối và ghi chú admin
-  updateApprovalStatus: async (id, status, adminNote) => {
-    const [result] = await db.query(
-      `UPDATE truyen_new SET trang_thai_kiem_duyet = ?, ghi_chu_admin = ? WHERE id = ?`,
-      [status, adminNote, id]
-    );
-    return result.affectedRows;
   },
 
   // Lọc truyện của tác giả

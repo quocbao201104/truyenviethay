@@ -13,27 +13,22 @@ const {
 router.post("/dang-ky", validateRegister, authController.register);
 router.post("/dang-nhap", validateLogin, authController.login);
 router.get("/me", authenticateToken, authController.getMe);
-router.get(
-  "/search-nameusers",
-  authenticateToken,
-  authorizeRoles("admin"),
-  authController.searchUsers
-);
 
 router.get(
   "/users/:id",
   authenticateToken,
   authorizeRoles("admin"),
   authController.getUserById
-);
+); // Lấy thông tin người dùng theo ID
 
-router.put("change-password", authenticateToken, authController.changePassword);
 router.get(
   "/all-users",
   authenticateToken,
   authorizeRoles("admin"),
-  authController.getAllUsers
+  authController.getAllUsers // Lấy danh sách tất cả người dùng
 );
+
+router.put("change-password", authenticateToken, authController.changePassword); // Đổi mật khẩu
 
 router.put(
   "/me",
@@ -41,21 +36,20 @@ router.put(
   upload.single("avatar"),
   validateUpdateUser,
   authController.updateMe
-);
+); // Cập nhật thông tin người dùng
 
 router.put(
   "/ban-user",
   authenticateToken,
   authorizeRoles("admin"),
   banUserUntil.banUser
-);
+); // Ban người dùng
 
-// Admin xóa user
 router.delete(
   "/users/:id",
   authenticateToken,
   authorizeRoles("admin"), // Chỉ admin được quyền xóa
   authController.deleteUser
-);
+); // Xóa người dùng (trừ tác giả)
 
 module.exports = router;

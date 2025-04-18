@@ -9,6 +9,7 @@ router.post(
   "/",
   authenticateToken,
   upload.single("file"),
+  validateUpStory,
   fileController.uploadFile
 );
 

@@ -1,4 +1,5 @@
 const StoryModel = require("../models/story.model");
+const storyService = require("../services/story.sevices"); // Import service duyệt truyện
 
 // Lấy danh sách tất cả truyện
 const getAllStories = async (req, res) => {
@@ -27,6 +28,7 @@ const getStoryById = async (req, res) => {
     res.status(500).json({ message: "Lỗi khi lấy truyện" });
   }
 };
+
 // Cập nhật thông tin truyện
 const updateStory = async (req, res) => {
   const storyId = req.params.id;
@@ -119,33 +121,21 @@ const getPendingApproval = async (req, res) => {
 
 // Duyệt hoặc từ chối truyện
 const approveOrRejectStory = async (req, res) => {
-  const { status, adminNote } = req.body;
+  const { action } = req.body; // action có thể là 'duyet' hoặc 'tu_choi'
   const storyId = req.params.id;
 
-  if (!status || !adminNote) {
+  if (!action) {
     return res
       .status(400)
-      .json({ message: "Vui lòng cung cấp trạng thái và ghi chú" });
+      .json({ message: "Vui lòng cung cấp hành động (duyet/tu_choi)." });
   }
 
   try {
-    const result = await StoryModel.updateApprovalStatus(
-      storyId,
-      status,
-      adminNote
-    );
-    if (result > 0) {
-      res.status(200).json({
-        message: `Truyện đã ${status === "duyet" ? "duyệt" : "từ chối"}`,
-      });
-    } else {
-      res.status(404).json({ message: "Không tìm thấy truyện để cập nhật" });
-    }
-  } catch (err) {
-    console.error("Lỗi khi duyệt / từ chối truyện:", err);
-    res
-      .status(500)
-      .json({ message: "Lỗi khi duyệt / từ chối truyện", error: err.message });
+    const result = await storyService.approveStory(storyId, action);
+    res.json(result);
+  } catch (error) {
+    console.error("Error in approveOrRejectStory:", error);
+    res.status(500).json({ message: "Có lỗi xảy ra!" });
   }
 };
 
